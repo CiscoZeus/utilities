@@ -5,7 +5,7 @@ Utilities for Cisco Zeus
 git clone https://github.com/CiscoZeus/utilities
 ```
 ## Usage
-Usage python3
+Use python3
 ```
 usage: migrate.py [-h] -s SOURCE_TOKEN -d DEST_TOKEN -o OBJ_TYPE
                   [-r [REPLACE_TOKENS [REPLACE_TOKENS ...]]]
