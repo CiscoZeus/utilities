@@ -7,7 +7,7 @@ parser.add_argument("-s",'--source_token', required=True,
 parser.add_argument("-d",'--dest_token', required=True,
                    help='Dest token')
 parser.add_argument("-o",'--obj_type', required=True,
-                   help='Object type: dashboard OR visualization')
+                   help='Object type: dashboard OR visualization OR savedsearch')
 
 parser.add_argument("-r",'--replace_tokens', nargs="*", required=False,
                    help='Replace tokens in the format SOURCE_STRING::DEST_STRING')
