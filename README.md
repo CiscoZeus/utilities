@@ -19,7 +19,7 @@ optional arguments:
   -d DEST_TOKEN, --dest_token DEST_TOKEN
                         Dest token
   -o OBJ_TYPE, --obj_type OBJ_TYPE
-                        Object type: dashboard OR visualization
+                        Object type: dashboard OR visualization OR savedsearch
   -r [REPLACE_TOKENS [REPLACE_TOKENS ...]], --replace_tokens [REPLACE_TOKENS [REPLACE_TOKENS ...]]
                         Replace tokens in the format
                         SOURCE_STRING::DEST_STRING
@@ -32,4 +32,7 @@ python3 ./migrate.py -s <SOURCE_TOKEN> -d <DEST_TOKEN> -r <SOURCE_USERNAME>::<DE
 ```
 ```
 python3 ./migrate.py -s <SOURCE_TOKEN> -d <DEST_TOKEN> -r <SOURCE_USERNAME>::<DEST_USERNAME> -o dashboard
+```
+```
+python3 ./migrate.py -s <SOURCE_TOKEN> -d <DEST_TOKEN> -r <SOURCE_USERNAME>::<DEST_USERNAME> -o savedsearch
 ```
