@@ -4,8 +4,8 @@ import time
 from github import Github
 from git import Repo
 
-GITHUB_USERNAME=
-GITHUB_PASSWORD=
+GITHUB_USERNAME=""
+GITHUB_PASSWORD=""
 
 g = Github(GITHUB_USERNAME, GITHUB_PASSWORD)
 for repo in g.get_organization("CiscoZeus").get_repos():
