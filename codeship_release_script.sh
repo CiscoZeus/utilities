@@ -6,8 +6,11 @@
 # GITHUB_API_TOKEN="token for the zeusuibot"
 # REPO_NAME="name of the repo"
 # BUILD_COMMAND="commands to build file, separate commands by;"
-# BUILD_FILE="name of the file generate by the build command"
 # BUILD_PATH="path to the build file, can be left empty if its a root"
+# Build file will be: $BUILD_FILE_PREFIX-$VERSION_NUMBER.$BUILD_FILE_EXTENSION
+# BUILD_FILE_PREFIX=""
+# BUILD_FILE_EXTENSION=""
+
 
 check_for_env_vars() {
     if [ -z ${!1} ]; then
@@ -19,7 +22,8 @@ check_for_env_vars() {
 check_for_env_vars "GITHUB_API_TOKEN"
 check_for_env_vars "REPO_NAME"
 check_for_env_vars "BUILD_COMMAND"
-check_for_env_vars "BUILD_FILE"
+check_for_env_vars "BUILD_FILE_PREFIX"
+check_for_env_vars "BUILD_FILE_EXTENSION"
 
 REPO_CHECK="$(curl --write-out %{http_code} --silent --output /dev/null -u zeusuibot:$GITHUB_API_TOKEN https://api.github.com/repos/CiscoZeus/$REPO_NAME)"
 
@@ -35,6 +39,8 @@ GITHUB_RELEASE_API="https://api.github.com/repos/CiscoZeus/$REPO_NAME/releases"
 eval $BUILD_COMMAND > /dev/null
 
 VERSION_NUMBER="$(cat package.json | python -c "import sys, json; print json.load(sys.stdin)['version']")"
+
+BUILD_FILE=$BUILD_FILE_PREFIX-$VERSION_NUMBER.$BUILD_FILE_EXTENSION
 
 upload_release_file() {
     echo "Uploading release file..."
