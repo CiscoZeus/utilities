@@ -5,7 +5,7 @@
 #
 # GITHUB_API_TOKEN="token for the zeusuibot"
 # REPO_NAME="name of the repo"
-# BUILD_COMMAND="commands to build file, separate commands by;"
+# BUILD_COMMAND="commands to build file, separate commands by; BUILD_FILE will be replaced with the actual name"
 # BUILD_PATH="path to the build file, can be left empty if its a root"
 # Build file will be: $BUILD_FILE_PREFIX-$VERSION_NUMBER.$BUILD_FILE_EXTENSION
 # BUILD_FILE_PREFIX=""
@@ -36,6 +36,7 @@ fi
 
 GITHUB_RELEASE_API="https://api.github.com/repos/CiscoZeus/$REPO_NAME/releases"
 
+BUILD_COMMAND="$(echo $BUILD_COMMAND | sed -e s/BUILD_FILE/$BUILD_FILE/g )"
 eval $BUILD_COMMAND > /dev/null
 
 VERSION_NUMBER="$(cat package.json | python -c "import sys, json; print json.load(sys.stdin)['version']")"
