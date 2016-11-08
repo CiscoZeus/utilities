@@ -7,9 +7,10 @@
 # REPO_NAME="name of the repo"
 # BUILD_COMMAND="commands to build file, separate commands by; BUILD_FILE will be replaced with the actual name"
 # BUILD_PATH="path to the build file, can be left empty if its a root"
-# Build file will be: $BUILD_FILE_PREFIX-$VERSION_NUMBER.$BUILD_FILE_EXTENSION
-# BUILD_FILE_PREFIX=""
-# BUILD_FILE_EXTENSION=""
+# Build file will be: $BUILD_FILE_PREFIX-$VERSION_NUMBER-$BUILD_FILE_SUFIX.$BUILD_FILE_EXTENSION
+# BUILD_FILE_PREFIX="kibana"
+# BUILD_FILE_SUFIX="x64"
+# BUILD_FILE_EXTENSION="tar.gz"
 
 
 check_for_env_vars() {
@@ -36,7 +37,11 @@ fi
 
 VERSION_NUMBER="$(cat package.json | python -c "import sys, json; print json.load(sys.stdin)['version']")"
 
-BUILD_FILE=$BUILD_FILE_PREFIX-$VERSION_NUMBER.$BUILD_FILE_EXTENSION
+if [ -n $BUILD_FILE_SUFIX]; then
+    BUILD_FILE=$BUILD_FILE_PREFIX-$VERSION_NUMBER-$BUILD_FILE_SUFIX.$BUILD_FILE_EXTENSION
+else
+    BUILD_FILE=$BUILD_FILE_PREFIX-$VERSION_NUMBER.$BUILD_FILE_EXTENSION
+fi
 
 GITHUB_RELEASE_API="https://api.github.com/repos/CiscoZeus/$REPO_NAME/releases"
 
