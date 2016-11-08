@@ -37,6 +37,8 @@ fi
 GITHUB_RELEASE_API="https://api.github.com/repos/CiscoZeus/$REPO_NAME/releases"
 
 BUILD_COMMAND="$(echo $BUILD_COMMAND | sed -e s/BUILD_FILE/$BUILD_FILE/g )"
+echo "Running build commands:"
+echo "$BUILD_COMMAND"
 eval $BUILD_COMMAND > /dev/null
 
 VERSION_NUMBER="$(cat package.json | python -c "import sys, json; print json.load(sys.stdin)['version']")"
