@@ -41,6 +41,10 @@ else
     BUILD_FILE=$BUILD_FILE_PREFIX-$VERSION_NUMBER.$BUILD_FILE_EXTENSION
 fi
 
+if [ -z $BUILD_PATH ]; then
+    zip -r $BUILD_FILE *
+fi
+
 GITHUB_RELEASE_API="https://api.github.com/repos/CiscoZeus/$REPO_NAME/releases"
 
 echo "Checking for existance of release file on:"
