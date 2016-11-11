@@ -35,13 +35,13 @@ fi
 
 VERSION_NUMBER="$(cat package.json | python -c "import sys, json; print json.load(sys.stdin)['version']")"
 
-if [ -z $BUILD_FILE_SUFIX ]; then
+if [ -z "${BUILD_FILE_SUFIX// }" ]; then
     BUILD_FILE=$BUILD_FILE_PREFIX-$VERSION_NUMBER.$BUILD_FILE_EXTENSION
 else
     BUILD_FILE=$BUILD_FILE_PREFIX-$VERSION_NUMBER-$BUILD_FILE_SUFIX.$BUILD_FILE_EXTENSION
 fi
 
-if [ -z $BUILD_PATH ]; then
+if [ -z "${BUILD_PATH// }" ]; then
     echo "Build path not found, zipping whole folder as relese file"
     zip -r $BUILD_FILE * > /dev/null
     echo "Finished zipping"
