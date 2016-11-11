@@ -41,7 +41,7 @@ else
     BUILD_FILE=$BUILD_FILE_PREFIX-$VERSION_NUMBER-$BUILD_FILE_SUFIX.$BUILD_FILE_EXTENSION
 fi
 
-if [ -z $BUILD_PATH ]; then
+if [ -z "${BUILD_PATH// }" ]; then
     echo "Build path not found, zipping whole folder as relese file"
     zip -r $BUILD_FILE * > /dev/null
     echo "Finished zipping"
