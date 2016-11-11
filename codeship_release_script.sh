@@ -42,7 +42,9 @@ else
 fi
 
 if [ -z $BUILD_PATH ]; then
-    zip -r $BUILD_FILE *
+    echo "Build path not found, zipping whole folder as relese file"
+    zip -r $BUILD_FILE * > /dev/null
+    echo "Finished zipping"
 fi
 
 GITHUB_RELEASE_API="https://api.github.com/repos/CiscoZeus/$REPO_NAME/releases"
