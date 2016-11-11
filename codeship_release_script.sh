@@ -5,7 +5,6 @@
 #
 # GITHUB_API_TOKEN="token for the zeusuibot"
 # REPO_NAME="name of the repo"
-# BUILD_COMMAND="commands to build file, separate commands by; BUILD_FILE will be replaced with the actual name"
 # BUILD_PATH="path to the build file, can be left empty if its a root"
 # Build file will be: $BUILD_FILE_PREFIX-$VERSION_NUMBER-$BUILD_FILE_SUFIX.$BUILD_FILE_EXTENSION
 # BUILD_FILE_PREFIX="kibana"
@@ -22,7 +21,6 @@ check_for_env_vars() {
 
 check_for_env_vars "GITHUB_API_TOKEN"
 check_for_env_vars "REPO_NAME"
-check_for_env_vars "BUILD_COMMAND"
 check_for_env_vars "BUILD_FILE_PREFIX"
 check_for_env_vars "BUILD_FILE_EXTENSION"
 
@@ -44,10 +42,6 @@ else
 fi
 
 GITHUB_RELEASE_API="https://api.github.com/repos/CiscoZeus/$REPO_NAME/releases"
-
-echo "Running build commands"
-BUILD_COMMAND="$(echo $BUILD_COMMAND | sed -e s/BUILD_FILE/$BUILD_FILE/g )"
-eval $BUILD_COMMAND > /dev/null
 
 echo "Checking for existance of release file on:"
 echo "$BUILD_PATH$BUILD_FILE"
