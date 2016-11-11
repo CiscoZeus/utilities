@@ -45,19 +45,33 @@ fi
 
 GITHUB_RELEASE_API="https://api.github.com/repos/CiscoZeus/$REPO_NAME/releases"
 
+echo "Running build commands"
 BUILD_COMMAND="$(echo $BUILD_COMMAND | sed -e s/BUILD_FILE/$BUILD_FILE/g )"
 eval $BUILD_COMMAND > /dev/null
 
+echo "Checking for existance of release file on:"
+echo "$BUILD_PATH$BUILD_FILE"
+if [ -f "$BUILD_PATH$BUILD_FILE" ]; then
+    echo "Release file found, proceeding with release"
+else
+    echo "Release file not found, aborting"
+    exit 1
+fi
 
 upload_release_file() {
     echo "Uploading release file..."
-    curl -X POST -u zeusuibot:$GITHUB_API_TOKEN --header "Content-Type:application/zip" \
+    UPLOAD_CODE="$(curl -X POST --write-out %{http_code} --silent --output /dev/null -u zeusuibot:$GITHUB_API_TOKEN --header "Content-Type:application/zip" \
          --data-binary @$BUILD_PATH$BUILD_FILE \
-         "https://uploads.github.com/repos/CiscoZeus/$REPO_NAME/releases/${RELEASE_ID}/assets?name=${BUILD_FILE}"
-    echo $'\nDone'
+         "https://uploads.github.com/repos/CiscoZeus/$REPO_NAME/releases/${RELEASE_ID}/assets?name=${BUILD_FILE}")"
+    if [ "$UPLOAD_CODE" = "201" ]; then
+        echo $'\nDone'
+    else
+        echo "Failed to upload file. Return code was: $UPLOAD_CODE"
+        exit 1
+    fi
 }
 
-echo "Checking if release if same version already exists..."
+echo "Checking if release with same version already exists..."
 RELEASE_ID="$(curl -s -u zeusuibot:$GITHUB_API_TOKEN  --request GET $GITHUB_RELEASE_API/tags/$VERSION_NUMBER | python -c "import sys, json; print json.load(sys.stdin)['id']" 2>/dev/null || true)"
 
 if [ -n "$RELEASE_ID" ]; then
@@ -66,7 +80,7 @@ if [ -n "$RELEASE_ID" ]; then
     if [ -n "$ASSET_ID" ]; then
         echo "Found release file, deleting it"
         curl --request DELETE -u zeusuibot:$GITHUB_API_TOKEN $GITHUB_RELEASE_API/assets/$ASSET_ID
-        echo "Old release deleted"
+        echo "Old release file deleted"
         upload_release_file
     else
         echo "Release file not found, will just upload new one"
