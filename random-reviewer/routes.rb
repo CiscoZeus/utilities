@@ -3,9 +3,14 @@ require 'json'
 require 'config'
 require 'octokit'
 require 'net/http'
+require 'cisco_spark'
 
 set :root, File.dirname(__FILE__)
 register Config
+
+CiscoSpark.configure do |config|
+  config.api_key = Settings.spark_api_key
+end
 
 def possible_reviewers(github_client, repository)
   all_members_json =
@@ -20,8 +25,8 @@ def select_random_reviewers(github_client, author, repository)
   [all_reviewers.sample(Settings.number_of_reviewers)].flatten
 end
 
-def request_reviewers(reviewers, pull_url)
-  request_reviewer_endpoint = pull_url + '/requested_reviewers'
+def request_reviewers(reviewers, pull_api_url)
+  request_reviewer_endpoint = pull_api_url + '/requested_reviewers'
 
   uri = URI(request_reviewer_endpoint)
 
@@ -37,13 +42,29 @@ def request_reviewers(reviewers, pull_url)
 end
 
 def comment_with_reviewers_names(github_client, repo, pull_number, reviewers)
-  reviewers = reviewers.map { |s| s.prepend('@') }
+  references = reviewers.map do |e|
+    e.dup.prepend('@')
+  end
   comment =
-    "Randomized reviewers for this pull request: #{reviewers.join(', ')}"
+    "Randomized reviewers for this pull request: #{references.join(', ')}"
   github_client.add_comment(repo, pull_number, comment)
 end
 
+def send_spark_message(reviewer_github_login, pull_url)
+  matches = Settings.spark_emails.select do |e|
+    e.github_login == reviewer_github_login
+  end
+  spark_email = matches.first.spark_email
+  message = CiscoSpark::Message.new(
+    text: "You have been select to review #{pull_url}",
+    to_person_email: spark_email
+  )
+  message.persist
+end
+
 post '/pull_request' do
+
+
   pull_request_json = JSON.parse(request.body.read)
   return unless pull_request_json['action'] == 'opened'
 
@@ -52,17 +73,19 @@ post '/pull_request' do
 
   author = pull_request_json['pull_request']['user']['login']
   repository = pull_request_json['repository']['full_name']
-  pull_url = pull_request_json['pull_request']['url']
+  pull_api_url = pull_request_json['pull_request']['url']
+  pull_url = pull_request_json['pull_request']['html_url']
   pull_number = pull_request_json['pull_request']['number']
 
   reviewers = select_random_reviewers(github_client, author, repository)
 
-  response = request_reviewers(reviewers, pull_url)
+  response = request_reviewers(reviewers, pull_api_url)
 
   if response.is_a? Net::HTTPSuccess
     comment_with_reviewers_names(
       github_client, repository, pull_number, reviewers
     )
+    reviewers.each { |r| send_spark_message(r, pull_url) }
     return 'Success'
   end
   'Failure'
