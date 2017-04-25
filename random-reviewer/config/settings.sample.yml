@@ -29,3 +29,7 @@ members_excluded_from_review:
   - 'zeusdownloadbot'
   - 'zeusuibot'
 number_of_reviewers: 2
+spark_api_key: 'your_spark_key_here'
+spark_emails:
+  - github_login: "goku"
+    spark_email: 'goku@cisco.com'
